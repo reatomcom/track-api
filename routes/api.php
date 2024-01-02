@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Activities;
+use App\Http\Controllers\Screenshots;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,4 @@ Route::get('/', function () {
     ];
 });
 Route::post('/activities',  [Activities::class, 'store']);
+Route::post('/screenshots',  [Screenshots::class, 'store']);
