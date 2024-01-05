@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserAuth;
+use App\Http\Controllers\TrackLogs;
 use App\Http\Controllers\Activities;
 use App\Http\Controllers\Screenshots;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +27,7 @@ Route::get('/', function () {
 });
 Route::post('/activities',  [Activities::class, 'store']);
 Route::post('/screenshots',  [Screenshots::class, 'store']);
+Route::post('/screenshots/log',  [Screenshots::class, 'log'])->middleware('apiAuth');
+Route::post('/tracklogs',  [TrackLogs::class, 'log'])->middleware('apiAuth');
+Route::post('/auth/login',  [UserAuth::class, 'login']);
+Route::post('/auth/logout',  [UserAuth::class, 'logout'])->middleware('apiAuth');

@@ -35,6 +35,46 @@ return [
 
     'connections' => [
 
+        'aim_base' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_BASE_HOST', '127.0.0.1'),
+            'port' => env('DB_BASE_PORT', '3306'),
+            'database' => env('DB_BASE_DATABASE', 'track_base'),
+            'username' => env('DB_BASE_USERNAME', 'root'),
+            'password' => env('DB_BASE_PASSWORD', ''),
+            'unix_socket' => env('DB_BASE_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => 'InnoDB',
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+        
+        'aim_app' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_APP_HOST', '127.0.0.1'),
+            'port' => env('DB_APP_PORT', '3306'),
+            'database' => env('DB_APP_DATABASE', 'track_app'),
+            'username' => env('DB_APP_USERNAME', 'root'),
+            'password' => env('DB_APP_PASSWORD', ''),
+            'unix_socket' => env('DB_APP_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => 'InnoDB',
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),

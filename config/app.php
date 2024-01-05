@@ -185,4 +185,14 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Salt
+    |--------------------------------------------------------------------------
+    |
+    | This salt is used to generate auth tokens.
+    |
+    */
+    
+    'salt' => env('APP_SALT', 'salt'),
 ];
