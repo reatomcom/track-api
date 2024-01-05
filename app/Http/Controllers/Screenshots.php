@@ -32,8 +32,8 @@ class Screenshots extends Controller
         $fileName = $request->input('fileName');
 
         $fsConfig = config('filesystems.default');
-        $fsPath = config('filesystems.disks.' . $fsConfig . '.root');
-        $fullPath = $fsPath . '/' . $fileName;
+        //$fsPath = config('filesystems.disks.' . $fsConfig . '.root');
+        $fullPath = '/' . $fileName;
 
         $screenshot = new Screenshot;
         $screenshot->client_id = $request->client->id;

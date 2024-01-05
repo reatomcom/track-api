@@ -30,4 +30,4 @@ Route::post('/screenshots',  [Screenshots::class, 'store']);
 Route::post('/screenshots/log',  [Screenshots::class, 'log'])->middleware('apiAuth');
 Route::post('/tracklogs',  [TrackLogs::class, 'log'])->middleware('apiAuth');
 Route::post('/auth/login',  [UserAuth::class, 'login']);
-Route::post('/auth/logout',  [UserAuth::class, 'logout']);
+Route::post('/auth/logout',  [UserAuth::class, 'logout'])->middleware('apiAuth');

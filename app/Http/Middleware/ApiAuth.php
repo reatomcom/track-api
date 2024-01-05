@@ -6,6 +6,7 @@ use Closure;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Device;
+use App\Models\ClientBase;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,21 +19,26 @@ class ApiAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $authToken = $request->header('Auth-Token', "undefined");
-
-        if ($authToken == "undefined") {
+        ClientBase::clientConfig(1);
+        
+        $token = $request->header('Auth-Token', "undefined");
+        
+        if ($token == "undefined") {
             return response([
                 "ok" => false,
                 "error" => "Auth failed #403-u"
             ]);
         }
-
-        if ($authToken == "") {
+        
+        if ($token == "") {
             return response([
                 "ok" => false,
                 "error" => "Auth failed #403-e"
             ]);
         }
+        
+        $salt = config('app.salt');
+        $authToken = sha1($token . $salt);
 
         $device = Device::where('auth_token', $authToken)->first();
         if (!$device) {

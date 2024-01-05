@@ -4,12 +4,16 @@ use Auth;
 use Validator;
 use Carbon\Carbon;
 use App\Models\Device;
+use App\Models\ClientBase;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class UserAuth extends Controller
 {
     public function login(Request $request)
     {
+        ClientBase::clientConfig(1);
+        
         $input = $request->all();
 
         $rules = [
@@ -41,8 +45,7 @@ class UserAuth extends Controller
             ];
         }
 
-
-        $token = sha1($user->id . $user->username . $user->password . time());
+        $token = Str::random(64);
         $salt = config('app.salt');
         $tokenWithSalt = sha1($token . $salt);
 
@@ -57,21 +60,13 @@ class UserAuth extends Controller
 
         return [
             'ok' => true,
-            'token' => $device->auth_token,
+            'token' => $token,//no hash
         ];
     }
 
     public function logout(Request $request)
     {
-        $authToken = $request->header('Auth-Token', "undefined");
-        $device = Device::where('auth_token', $authToken)->first();
-
-        if (!$device) {
-            return [
-                'ok' => false,
-                'message' => 'Device not found',
-            ];
-        }
+        $device = $request->device;
 
         $device->delete();
 
