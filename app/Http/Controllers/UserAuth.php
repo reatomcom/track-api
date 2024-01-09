@@ -3,6 +3,7 @@
 use Auth;
 use Validator;
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Device;
 use App\Models\ClientBase;
 use Illuminate\Support\Str;
@@ -17,8 +18,10 @@ class UserAuth extends Controller
         $input = $request->all();
 
         $rules = [
-            'username' => 'required|min:4|max:255',
-            'password' => 'required|min:4|max:255'
+            'username' => 'required_without:deviceId|min:4|max:255',
+            'password' => 'required_without:deviceId|min:4|max:255',
+            'deviceId' => 'required_without:username|min:4|max:255',
+            'deviceToken' => 'required_without:username|min:4|max:255',
         ];
 
         $validator = Validator::make($input, $rules);
@@ -29,23 +32,38 @@ class UserAuth extends Controller
             ];
         }
 
-        $username = $input['username'];
-        $password = $input['password'];
-
-        if (Auth::attempt(['username' => $username, 'password' => $password])) {
-            $user = Auth::user();
-        } else {
-            $user = null;
+        if (isset($input['username'])) {
+            $token = Str::random(64);
+            $username = $input['username'];
+            $password = $input['password'];
+            if (Auth::attempt(['username' => $username, 'password' => $password])) {
+                $user = Auth::user();
+            } else {
+                return [
+                    'ok' => false,
+                    'message' => 'User not found or password is incorrect',
+                ];
+            }
         }
 
-        if (!$user) {
-            return [
-                'ok' => false,
-                'message' => 'User not found or password is incorrect',
-            ];
+        if (isset($input['deviceId'])) {
+            $deviceId = $input['deviceId'];
+            $token = $input['deviceToken'];
+
+            $salt = config('app.salt');
+            $authToken = sha1($token . $salt);
+            
+            $user = User::where('device_id', $deviceId)
+                ->where('device_token', $authToken)
+                ->first();
+            if (!$user) {
+                return [
+                    'ok' => false,
+                    'message' => 'User not found or token is incorrect',
+                ];
+            }
         }
 
-        $token = Str::random(64);
         $salt = config('app.salt');
         $tokenWithSalt = sha1($token . $salt);
 
@@ -56,11 +74,14 @@ class UserAuth extends Controller
         $device->active_till = Carbon::now()->addDays(30);
         $device->save();
 
-        // TODOl; ja ir limits vec'āko device izmet 'ār'ā.
-
         return [
             'ok' => true,
             'token' => $token,//no hash
+            'maxScreenWidth' => $user->max_screen_width,
+            'intervalScreenshot' => $user->interval_screenshot,
+            'intervalLog' => $user->interval_log,
+            'trackMode' => $user->track_mode,
+            'isBackgroundApp' => $user->is_background_app,
         ];
     }
 
